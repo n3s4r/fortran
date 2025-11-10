@@ -1,0 +1,30 @@
+program calculate_bmi
+    implicit none
+    real :: height, weight, bmi
+    integer :: age
+
+    ! Ask for user input
+    print *, "Enter your height in meters: "
+    read *, height
+    print *, "Enter your weight in kilograms: "
+    read *, weight
+    print *, "Enter your age: "
+    read *, age
+
+    ! Call the BMI function
+    bmi = compute_bmi(weight, height)
+
+    ! Display the result
+    print *, "Your BMI is: ", bmi
+
+contains
+
+    ! Function to calculate BMI
+    real function compute_bmi(weight, height)
+        implicit none
+        real, intent(in) :: weight, height
+
+        compute_bmi = weight / (height**2)
+    end function compute_bmi
+
+end program calculate_bmi
