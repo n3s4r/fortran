@@ -245,3 +245,191 @@ close(10)
 
 
 ---
+
+🟦 11. Modules in Fortran
+
+Modules are like libraries — you write functions, variables, types, etc., then import them.
+
+Creating a Module
+
+module math_module
+    implicit none
+
+contains
+    function square(x) result(res)
+        real, intent(in) :: x
+        real :: res
+        res = x * x
+    end function square
+
+end module math_module
+
+Using a Module
+
+program test
+    use math_module
+    implicit none
+
+    print *, square(5.0)
+end program test
+
+
+---
+
+🟩 12. Derived Types (like Classes/Structs)
+
+Used to create custom data types:
+
+type :: Student
+    character(len=20) :: name
+    integer :: age
+    real :: gpa
+end type Student
+
+Using the Derived Type
+
+type(Student) :: s
+
+s%name = "Nesar"
+s%age = 25
+s%gpa = 3.5
+
+% is used to access fields.
+
+
+---
+
+🟨 13. Pointers & Dynamic Arrays
+
+(a) Allocating a Dynamic Array
+
+integer, allocatable :: arr(:)
+
+allocate(arr(10))   ! creates array of size 10
+
+arr = 5             ! fills all with 5
+
+deallocate(arr)
+
+
+---
+
+(b) Pointer Arrays
+
+integer, target :: x = 10
+integer, pointer :: p
+
+p => x      ! pointer assignment
+print *, p  ! prints 10
+
+p = 20      ! modifies x
+print *, x  ! prints 20
+
+Pointer works like referencing.
+
+
+---
+
+(c) Dynamic 2D Arrays
+
+real, allocatable :: mat(:,:)
+
+allocate(mat(3,3))
+mat = 0.0
+
+
+---
+
+🟧 14. File Positioning Commands
+
+1. rewind – go back to start
+
+rewind(10)
+
+2. backspace – go one record back
+
+backspace(10)
+
+3. endfile – mark end of file
+
+endfile(10)
+
+4. flush – force write to disk
+
+flush(20)
+
+These are helpful when updating or scanning files repeatedly.
+
+
+---
+
+🟥 15. FULL SAMPLE PROGRAM
+
+This example uses:
+
+✔ module
+✔ derived type
+✔ dynamic arrays
+✔ file read/write
+✔ loops
+✔ functions
+
+
+---
+
+module utils
+    implicit none
+
+contains
+
+    function average(arr, n) result(avg)
+        real, intent(in) :: arr(:)
+        integer, intent(in) :: n
+        real :: avg
+        avg = sum(arr) / n
+    end function average
+
+end module utils
+
+
+---
+
+program student_data
+    use utils
+    implicit none
+
+    type :: Student
+        character(len=20) :: name
+        integer :: age
+        real :: marks(3)
+    end type Student
+
+    type(Student), allocatable :: students(:)
+    integer :: n, i
+    real :: avg
+
+    print *, "How many students?"
+    read *, n
+
+    allocate(students(n))
+
+    do i = 1, n
+        print *, "Enter name, age and 3 marks:"
+        read *, students(i)%name, students(i)%age, students(i)%marks
+    end do
+
+    open(unit=20, file="report.txt", status="replace")
+
+    do i = 1, n
+        avg = average(students(i)%marks, 3)
+        write(20, *) trim(students(i)%name), students(i)%age, avg
+    end do
+
+    close(20)
+    deallocate(students)
+
+    print *, "Report generated!"
+end program student_data
+
+
+---
